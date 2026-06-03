@@ -4,4 +4,10 @@ export interface User {
   senha: string
 }
 
-export const users: User[] = []
+export const users: User[] = [
+  {
+    nome: 'Maria',
+    email: 'admin@copa.com',
+    senha: '123456'
+  }
+]

@@ -3,19 +3,32 @@
 <form @submit.prevent="submit">
 
 <ion-item>
+<ion-input
+v-model="nome"
+label="Nome Completo"
+/>
+</ion-item>
 
+<ion-item>
 <ion-input
 v-model="email"
 label="Email"
 />
+</ion-item>
 
+<ion-item>
+<ion-input
+v-model="senha"
+label="Senha"
+type="password"
+/>
 </ion-item>
 
 <ion-button
 expand="block"
 type="submit"
 >
-Enviar
+Cadastrar
 </ion-button>
 
 </form>
@@ -32,17 +45,19 @@ IonInput,
 IonButton
 } from '@ionic/vue'
 
-const emit = defineEmits([
-'reset'
-])
+const emit = defineEmits(['register'])
 
+const nome = ref('')
 const email = ref('')
+const senha = ref('')
 
 function submit(){
 
 emit(
-'reset',
-email.value
+'register',
+nome.value,
+email.value,
+senha.value
 )
 
 }

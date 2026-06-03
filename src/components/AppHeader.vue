@@ -5,7 +5,9 @@
 <ion-toolbar color="success">
 
 <ion-title>
-⚽ Álbum da Copa
+
+🏆 Álbum da Copa 2026
+
 </ion-title>
 
 </ion-toolbar>

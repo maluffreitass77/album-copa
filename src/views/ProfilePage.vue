@@ -6,37 +6,32 @@
 
 <ion-content class="ion-padding">
 
-<h2>
-Perfil
-</h2>
+<ion-card>
 
-<p>
-Usuário logado
-</p>
+<ion-card-header>
 
-<ion-button
-expand="block"
-color="danger"
->
+<ion-card-title>
 
-Sair
+👤 Perfil
 
-</ion-button>
+</ion-card-title>
+
+</ion-card-header>
+
+<ion-card-content>
+
+<p><strong>Nome:</strong> Maria</p>
+
+<p><strong>Email:</strong> admin@copa.com</p>
+
+<p><strong>Figurinhas:</strong> {{ total }}</p>
+
+</ion-card-content>
+
+</ion-card>
 
 </ion-content>
 
 </ion-page>
 
 </template>
-
-<script setup lang="ts">
-
-import {
-IonPage,
-IonContent,
-IonButton
-} from '@ionic/vue'
-
-import AppHeader from '@/components/AppHeader.vue'
-
-</script>

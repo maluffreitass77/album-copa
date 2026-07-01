@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { users, User } from '../data/users'
+import { cadastrarUsuario, loginUsuario } from '@/services/database'
 
 const currentUser = ref<User | null>(null)
 
@@ -10,7 +11,7 @@ export function useAuth() {
     senha: string
   ): boolean => {
 
-    const user = users.find(
+    const user = loginUsuario(
       u =>
         u.email === email &&
         u.senha === senha
@@ -30,7 +31,7 @@ export function useAuth() {
     senha: string
   ): void => {
 
-    users.push({
+    cadastrarUsuario({
       nome,
       email,
       senha

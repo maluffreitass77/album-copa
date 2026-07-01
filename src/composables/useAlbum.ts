@@ -1,26 +1,172 @@
-import { ref } from 'vue'
-import { stickers, Sticker } from '../data/stickers'
+import { ref } from "vue";
 
-const album = ref<Sticker[]>(stickers)
+import { getDB } from "../services/database";
 
-export function useAlbum() {
+import type { Sticker } from "../types/Sticker";
 
-  const toggleCollected = (
-    id: number
-  ): void => {
+export function useAlbum(){
 
-    const sticker = album.value.find(
-      s => s.id === id
-    )
 
-    if (sticker) {
-      sticker.coletada =
-        !sticker.coletada
-    }
-  }
+const figurinhas = ref<Sticker[]>([]);
 
-  return {
-    album,
-    toggleCollected
-  }
+
+
+async function carregar(){
+
+
+const db=getDB();
+
+
+const resultado =
+await db.query(
+
+`
+SELECT *
+FROM figurinhas
+
+`
+
+);
+
+
+figurinhas.value =
+resultado.values;
+
+
+}
+
+
+
+async function marcarColetada(id,status){
+
+
+const db=getDB();
+
+
+await db.run(
+
+`
+UPDATE figurinhas
+
+SET coletada=?
+
+WHERE id=?
+
+`,
+
+[
+status ? 1:0,
+id
+]
+
+);
+
+
+
+await carregar();
+
+
+}
+
+
+
+
+async function pesquisar(texto){
+
+
+const db=getDB();
+
+
+
+const resultado =
+await db.query(
+
+`
+
+SELECT *
+
+FROM figurinhas
+
+WHERE nome LIKE ?
+
+OR selecao LIKE ?
+
+`,
+
+[
+`%${texto}%`,
+`%${texto}%`
+]
+
+);
+
+
+
+figurinhas.value =
+resultado.values;
+
+
+
+}
+
+
+
+async function filtro(tipo){
+
+
+const db=getDB();
+
+
+
+let sql =
+"SELECT * FROM figurinhas";
+
+
+
+if(tipo==="coletadas"){
+
+sql +=
+" WHERE coletada=1";
+
+}
+
+
+if(tipo==="pendentes"){
+
+sql +=
+" WHERE coletada=0";
+
+}
+
+
+
+const resultado =
+await db.query(sql);
+
+
+figurinhas.value = resultado.values as Sticker[];
+
+
+
+}
+
+
+
+return{
+
+figurinhas,
+
+carregar,
+
+marcarColetada,
+
+pesquisar,
+
+filtro
+
+
+}
+
+
+
 }

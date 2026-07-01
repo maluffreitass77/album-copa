@@ -1,4 +1,9 @@
 <template>
+    <ion-badge>
+
+{{ sticker.raridade }}
+
+</ion-badge>
 
 <ion-card>
 

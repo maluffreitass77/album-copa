@@ -1,60 +1,98 @@
-import { ref } from 'vue'
-import { users, User } from '../data/users'
+import { getDB } from "../services/database";
 
-const currentUser = ref<User | null>(null)
 
-export function useAuth() {
+export function useAuth(){
 
-  const login = (
-    email: string,
-    senha: string
-  ): boolean => {
 
-    const user = users.find(
-      u =>
-        u.email === email &&
-        u.senha === senha
-    )
 
-    if (user) {
-      currentUser.value = user
-      return true
-    }
+async function cadastrar(nome,email,senha){
 
-    return false
-  }
 
-  const register = (
-    nome: string,
-    email: string,
-    senha: string
-  ): void => {
+const db = getDB();
 
-    users.push({
-      nome,
-      email,
-      senha
-    })
-  }
 
-  const logout = (): void => {
-    currentUser.value = null
-  }
+await db.run(
 
-  const resetPassword = (
-    email: string
-  ): boolean => {
+`
+INSERT INTO usuarios
+(nome,email,senha)
 
-    return users.some(
-      u => u.email === email
-    )
-  }
+VALUES(?,?,?)
 
-  return {
-    currentUser,
-    login,
-    register,
-    logout,
-    resetPassword
-  }
+`,
+[
+nome,
+email,
+senha
+]
+
+);
+
+
+}
+
+
+
+async function login(email,senha){
+
+
+const db=getDB();
+
+
+const resultado =
+await db.query(
+
+`
+SELECT *
+FROM usuarios
+WHERE email=?
+AND senha=?
+
+`,
+[
+email,
+senha
+]
+
+);
+
+
+
+if(resultado.values.length){
+
+localStorage.setItem(
+"user",
+JSON.stringify(resultado.values[0])
+);
+
+
+return true;
+
+}
+
+
+return false;
+
+
+}
+
+
+
+function logout(){
+
+localStorage.removeItem("user");
+
+}
+
+
+
+return {
+
+cadastrar,
+login,
+logout
+
+};
+
+
 }

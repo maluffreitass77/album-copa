@@ -1,91 +1,160 @@
-import { CapacitorSQLite, SQLiteDBConnection } from "@capacitor-community/sqlite";
- 
-const dbName = 'appData'
-let db: SQLiteDBConnection
- 
-export async function initDatabase() {
-    try {
-        db = await CapacitorSQLite.createConnection({
-            database:dbName,
-            version: 1,
-        })
-        await db.open()
-        await db.execute({
-            statements: `CREATE TABLE IF NOT EXISTS contatos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                email TEXT NOT NULL,
-                telefone TEXT
-            );`,
-        })
-    } catch (error) {
-        console.error('Erro ao iniciar DB', error)
-    }
-}
- 
-export async function addContato(nome: string, email: string, telefone: string) {
-    const query = `INSERT INTO contatos (nome, email, telefone) VALUES (?, ?, ?);`
-    await db.run(query, [nome, email, telefone])
-}
- 
-export async function listContatos() {
-    const result = await db.query(`SELECT * FROM contatos;`)
-    return result.values || []
-}
- 
- 
-import { CapacitorSQLite, SQLiteDBConnection } from "@capacitor-community/sqlite";
- 
-const dbName = 'appData'
-let db: SQLiteDBConnection
- 
-export async function initDatabase() {
-    try {
-        db = await CapacitorSQLite.createConnection({
-            database:dbName,
-            version: 1,
-        })
-        await db.open()
-        await db.execute({
-            statements: `CREATE TABLE IF NOT EXISTS contatos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                email TEXT NOT NULL,
-                telefone TEXT
-            );`,
-        })
-    } catch (error) {
-        console.error('Erro ao iniciar DB', error)
-    }
-}
- 
-export async function addContato(nome: string, email: string, telefone: string) {
-    const query = `INSERT INTO contatos (nome, email, telefone) VALUES (?, ?, ?);`
-    await db.run(query, [nome, email, telefone])
-}
- 
-export async function listContatos() {
-    const result = await db.query(`SELECT * FROM contatos;`)
-    return result.values || []
-}
- 
- export async function deleteContatoById(id: number){
-    const query = `DELETE FROM contatos where id = ?`;
-    return await db.run(query, [id]);
+import {
+  CapacitorSQLite,
+  SQLiteConnection,
+  SQLiteDBConnection
+} from '@capacitor-community/sqlite';
+
+
+
+let db: SQLiteDBConnection;
+
+
+
+const sqlite = new SQLiteConnection(
+  CapacitorSQLite
+);
+
+
+
+
+
+export async function initDB() {
+
+
+  db = await sqlite.createConnection(
+
+    "albumcopa",
+
+    false,
+
+    "no-encryption",
+
+    1,
+
+    false
+
+  );
+
+
+
+  await db.open();
+
+
+
+
+  await db.execute(`
+
+    CREATE TABLE IF NOT EXISTS usuarios(
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      nome TEXT NOT NULL,
+
+      email TEXT UNIQUE NOT NULL,
+
+      senha TEXT NOT NULL
+
+    )
+
+  `);
+
+
+
+
+
+
+  await db.execute(`
+
+    CREATE TABLE IF NOT EXISTS figurinhas(
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      nome TEXT NOT NULL,
+
+      selecao TEXT NOT NULL,
+
+      foto TEXT,
+
+      raridade TEXT NOT NULL,
+
+      coletada INTEGER DEFAULT 0
+
+    )
+
+  `);
+
+
+
+
+  await inserirFigurinhas();
+
+
 }
 
-export async function updateContato(
-    id: number,
-    nome: string,
-    email: string,
-    telefone: string
-){
-    const query = `UPDATE contatos SET nome = ?, email = ?, telefone = ? WHERE id = ?`;
-    await db.run(query, [nome, email, telefone, id]);
+
+
+
+
+
+
+async function inserirFigurinhas() {
+
+
+
+  const resultado = await db.query(
+
+    "SELECT COUNT(*) as total FROM figurinhas"
+
+  );
+
+
+
+
+  if (resultado.values && resultado.values[0].total > 0) {
+
+    return;
+
+  }
+
+
+
+
+
+  await db.execute(`
+
+
+    INSERT INTO figurinhas
+
+    (nome,selecao,foto,raridade)
+
+    VALUES
+
+
+    ('Neymar','Brasil','neymar.png','brilhante'),
+
+
+    ('Messi','Argentina','messi.png','rara'),
+
+
+    ('Mbappe','França','mbappe.png','comum')
+
+
+  `);
+
+
+
 }
 
-export async function findContatoById(id: number){
-    const query = `SELECT * FROM contatos where id = ?`;
-    const result = await db.query(query, [id]);
-    return result.values || [];
+
+
+
+
+
+
+export function getDB() {
+
+
+  return db;
+
+
 }

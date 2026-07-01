@@ -98,3 +98,26 @@ src/
 Aplicar os conceitos de componentização, composables, navegação entre páginas, gerenciamento de estado local e desenvolvimento de interfaces utilizando Ionic Vue e TypeScript.
 
 ---
+
+# Nova atividade do dia 01/07
+## Sobre o projeto
+
+Aplicativo mobile de álbum de figurinhas da Copa.
+
+Possui:
+
+- cadastro
+- login
+- banco SQLite
+- coleção de figurinhas
+- filtros
+- pesquisa
+- raridade das cartas
+
+
+## Tecnologias
+
+- Vue
+- Ionic
+- Capacitor
+- SQLite

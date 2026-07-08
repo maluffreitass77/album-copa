@@ -1,90 +1,73 @@
 <template>
-    <ion-badge>
+  <ion-card>
 
-{{ sticker.raridade }}
+    <ion-badge color="primary">
+      {{ sticker.raridade }}
+    </ion-badge>
 
-</ion-badge>
+    <img
+      :src="'/img/' + sticker.foto"
+      class="foto"
+      @error="erroImagem"
+    />
 
-<ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        {{ sticker.nome }}
+      </ion-card-title>
+    </ion-card-header>
 
-<img
-:src="sticker.foto"
-class="foto"
-/>
+    <ion-card-content>
 
-<ion-card-header>
+      🏳️ {{ sticker.selecao }}
 
-<ion-card-title>
+      <br /><br />
 
-{{ sticker.nome }}
+      <ion-badge
+        :color="sticker.coletada ? 'success' : 'danger'"
+      >
+        {{ sticker.coletada ? 'Coletada' : 'Pendente' }}
+      </ion-badge>
 
-</ion-card-title>
+      <br /><br />
 
-</ion-card-header>
+      <ion-button
+        expand="block"
+        @click="$emit('toggle')"
+      >
+        Trocar Status
+      </ion-button>
 
-<ion-card-content>
+    </ion-card-content>
 
-🏳️ {{ sticker.selecao }}
-
-<br><br>
-
-<ion-badge
-:color="
-sticker.coletada
-? 'success'
-: 'danger'
-"
->
-
-{{ sticker.coletada
-? 'Coletada'
-: 'Pendente'
-}}
-
-</ion-badge>
-
-<br><br>
-
-<ion-button
-expand="block"
-@click="$emit('toggle')"
->
-
-Trocar Status
-
-</ion-button>
-
-</ion-card-content>
-
-</ion-card>
-
+  </ion-card>
 </template>
 
 <script setup lang="ts">
-
 import {
-IonCard,
-IonCardHeader,
-IonCardTitle,
-IonCardContent,
-IonButton,
-IonBadge
-} from '@ionic/vue'
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonButton,
+  IonBadge
+} from "@ionic/vue"
 
 defineProps({
-sticker:Object
+  sticker: Object
 })
 
+function erroImagem(event: Event) {
+  console.log("Imagem não encontrada:", (event.target as HTMLImageElement).src)
+}
 </script>
 
 <style scoped>
 
 .foto{
-
-width:100%;
-height:220px;
-object-fit:cover;
-
+  width:100%;
+  height:220px;
+  object-fit:cover;
 }
 
 </style>

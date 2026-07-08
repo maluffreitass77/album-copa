@@ -8,86 +8,70 @@ const figurinhas = ref<Sticker[]>([]);
 export function useAlbum() {
 
   const { verificarConquistas } = useAchievements();
-
   async function carregar() {
 
     const db = getDB();
 
     const resultado = await db.query(`
-      SELECT *
-      FROM figurinhas
-      ORDER BY selecao,nome
-    `);
+    SELECT *
+    FROM figurinhas
+    ORDER BY selecao,nome
+  `);
+
+    console.log("FIGURINHAS:", resultado.values);
 
     figurinhas.value = (resultado.values || []) as Sticker[];
 
   }
+
 
   async function pesquisar(texto: string) {
 
     const db = getDB();
 
-    const resultado = await db.query(
-      `
-      SELECT *
+    const resultado = await db.query(sql);
 
-      FROM figurinhas
-
-      WHERE
-
-      nome LIKE ?
-
-      OR
-
-      selecao LIKE ?
-
-      ORDER BY selecao,nome
-      `,
-      [
-        `%${texto}%`,
-        `%${texto}%`
-      ]
-    );
+    console.log("TIPO:", tipo);
+    console.log("RESULTADO:", resultado.values);
 
     figurinhas.value = (resultado.values || []) as Sticker[];
 
-  }
 
-  async function filtro(tipo: string) {
+    async function filtro(tipo: string) {
 
-    const db = getDB();
+      const db = getDB();
 
-    let sql = `
+      let sql = `
       SELECT *
       FROM figurinhas
     `;
 
-    if (tipo == "coletadas") {
+      if (tipo == "coletadas") {
 
-      sql += `
+        sql += `
         WHERE coletada=1
       `;
 
-    }
+      }
 
-    if (tipo == "pendentes") {
+      if (tipo == "pendentes") {
 
-      sql += `
+        sql += `
         WHERE coletada=0
       `;
 
-    }
+      }
 
-    sql += `
+      sql += `
       ORDER BY selecao,nome
     `;
 
-    const resultado = await db.query(sql);
+      const resultado = await db.query(sql);
 
-    figurinhas.value = (resultado.values || []) as Sticker[];
+      figurinhas.value = (resultado.values || []) as Sticker[];
 
+    }
   }
-
   async function marcarColetada(
     id: number,
     status: boolean
@@ -169,7 +153,7 @@ export function useAlbum() {
 
     pesquisar,
 
-    filtro,
+    // filtro,
 
     marcarColetada,
 

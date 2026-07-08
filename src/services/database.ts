@@ -54,11 +54,13 @@ export async function initDB() {
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS achievements(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      descricao TEXT NOT NULL,
-      icone TEXT NOT NULL
-    )
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome TEXT NOT NULL,
+  descricao TEXT NOT NULL,
+  icone TEXT NOT NULL,
+  desbloqueada INTEGER DEFAULT 0,
+  data_desbloqueio TEXT
+)
   `);
 
   // ==========================
@@ -84,13 +86,14 @@ export async function initDB() {
 
 async function inserirFigurinhas() {
 
-  const resultado = await db.query(
-    "SELECT COUNT(*) as total FROM figurinhas"
-  );
+  await db.execute(`
+    DELETE FROM figurinhas
+  `);
 
-  if (resultado.values && resultado.values[0].total > 0) {
-    return;
-  }
+  await db.execute(`
+    DELETE FROM sqlite_sequence
+    WHERE name='figurinhas'
+  `);
 
   await db.execute(`
     INSERT INTO figurinhas
@@ -200,7 +203,56 @@ async function inserirAchievements() {
   `);
 
 }
+export async function getTotalFigurinhas() {
+  const result = await db.query(`
+    SELECT COUNT(*) as total
+    FROM figurinhas
+    WHERE coletada = 1
+  `)
 
+  return result.values?.[0].total || 0
+}
+
+export async function getTotalRaras() {
+  const result = await db.query(`
+    SELECT COUNT(*) as total
+    FROM figurinhas
+    WHERE coletada = 1
+    AND raridade='rara'
+  `)
+
+  return result.values?.[0].total || 0
+}
+
+export async function getTotalBrilhantes() {
+  const result = await db.query(`
+    SELECT COUNT(*) as total
+    FROM figurinhas
+    WHERE coletada = 1
+    AND raridade='brilhante'
+  `)
+
+  return result.values?.[0].total || 0
+}
+
+export async function getTotalAlbum() {
+  const result = await db.query(`
+    SELECT COUNT(*) as total
+    FROM figurinhas
+  `)
+
+  return result.values?.[0].total || 0
+}
 export function getDB() {
   return db;
+}
+
+export async function getPercentualAlbum() {
+
+  const coletadas = await getTotalFigurinhas()
+
+  const total = await getTotalAlbum()
+
+  return Math.round((coletadas / total) * 100)
+
 }

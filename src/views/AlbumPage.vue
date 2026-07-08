@@ -1,243 +1,140 @@
 <template>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title> Álbum da Copa </ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-<ion-page>
+    <ion-content class="ion-padding">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title> Meu Álbum </ion-card-title>
+        </ion-card-header>
 
-<ion-header>
+        <ion-card-content>
+          <p>
+            Total de Figurinhas:
 
-<ion-toolbar>
+            <strong>{{ total }}</strong>
+          </p>
 
-<ion-title>
+          <p>
+            Coletadas:
 
-Álbum da Copa
+            <strong>{{ coletadas }}</strong>
+          </p>
 
-</ion-title>
+          <p>
+            Conclusão:
 
-</ion-toolbar>
+            <strong>{{ percentual }}%</strong>
+          </p>
 
-</ion-header>
+          <ion-progress-bar :value="percentual / 100"> </ion-progress-bar>
+        </ion-card-content>
+      </ion-card>
 
-<ion-content class="ion-padding">
+      <ion-searchbar
+        v-model="texto"
+        placeholder="Pesquisar jogador ou seleção"
+        @ionInput="buscar"
+      />
 
-<ion-card>
+      <ion-segment v-model="tipo" @ionChange="filtrar">
+        <ion-segment-button value="todas"> Todas </ion-segment-button>
 
-<ion-card-header>
+        <ion-segment-button value="coletadas"> Coletadas </ion-segment-button>
 
-<ion-card-title>
+        <ion-segment-button value="pendentes"> Pendentes </ion-segment-button>
+      </ion-segment>
 
-Meu Álbum
+      <br />
 
-</ion-card-title>
+     <br />
 
-</ion-card-header>
-
-<ion-card-content>
-
-<p>
-
-Total de Figurinhas:
-
-<strong>{{ total }}</strong>
-
-</p>
-
-<p>
-
-Coletadas:
-
-<strong>{{ coletadas }}</strong>
-
-</p>
-
-<p>
-
-Conclusão:
-
-<strong>{{ percentual }}%</strong>
-
-</p>
-
-<ion-progress-bar
-
-:value="percentual/100"
-
->
-
-</ion-progress-bar>
-
-</ion-card-content>
-
-</ion-card>
-
-<ion-searchbar
-
-v-model="texto"
-
-placeholder="Pesquisar jogador ou seleção"
-
-@ionInput="buscar"
-
-/>
-
-<ion-segment
-
-v-model="tipo"
-
-@ionChange="filtrar"
-
->
-
-<ion-segment-button value="todas">
-
-Todas
-
-</ion-segment-button>
-
-<ion-segment-button value="coletadas">
-
-Coletadas
-
-</ion-segment-button>
-
-<ion-segment-button value="pendentes">
-
-Pendentes
-
-</ion-segment-button>
-
-</ion-segment>
-
-<br>
+<p><strong>Quantidade carregada:</strong> {{ figurinhas.length }}</p>
 
 <StickerList
-
-:figurinhas="figurinhas"
-
-@alterar="alterarStatus"
-
+  :figurinhas="figurinhas"
+  @alterar="alterarStatus"
 />
-
-</ion-content>
-
-</ion-page>
-
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
-
-import {
-
-ref,
-
-onMounted
-
-} from "vue";
+import { ref, onMounted } from "vue";
 
 import StickerList from "../components/StickerList.vue";
 
-import {
+import { useAlbum } from "../composables/useAlbum";
 
-useAlbum
+const {
+  figurinhas,
 
-} from "../composables/useAlbum";
+  carregar,
 
-const{
+  pesquisar,
 
-figurinhas,
+  filtro,
 
-carregar,
+  marcarColetada,
 
-pesquisar,
+  totalColetadas,
 
-filtro,
+  totalAlbum,
 
-marcarColetada,
+  percentualAlbum,
+} = useAlbum();
 
-totalColetadas,
+const texto = ref("");
 
-totalAlbum,
+const tipo = ref("todas");
 
-percentualAlbum
+const coletadas = ref(0);
 
-}=useAlbum();
+const total = ref(0);
 
-const texto=ref("");
+const percentual = ref(0);
 
-const tipo=ref("todas");
+async function atualizarResumo() {
+  coletadas.value = await totalColetadas();
 
-const coletadas=ref(0);
+  total.value = await totalAlbum();
 
-const total=ref(0);
-
-const percentual=ref(0);
-
-async function atualizarResumo(){
-
-coletadas.value=
-
-await totalColetadas();
-
-total.value=
-
-await totalAlbum();
-
-percentual.value=
-
-await percentualAlbum();
-
+  percentual.value = await percentualAlbum();
 }
 
-onMounted(async()=>{
+onMounted(async () => {
+  await carregar();
 
-await carregar();
-
-await atualizarResumo();
-
+  await atualizarResumo();
 });
 
-async function buscar(){
-
-if(texto.value==""){
-
-await carregar();
-
-}else{
-
-await pesquisar(texto.value);
-
+async function buscar() {
+  if (texto.value == "") {
+    await carregar();
+  } else {
+    await pesquisar(texto.value);
+  }
 }
 
+async function filtrar() {
+  if (tipo.value == "todas") {
+    await carregar();
+  } else {
+    await filtro(tipo.value);
+  }
 }
 
-async function filtrar(){
+async function alterarStatus(figurinha: any) {
+  await marcarColetada(
+    figurinha.id,
 
-if(tipo.value=="todas"){
+    figurinha.coletada == 0,
+  );
 
-await carregar();
-
-}else{
-
-await filtro(tipo.value);
-
+  await atualizarResumo();
 }
-
-}
-
-async function alterarStatus(
-
-figurinha:any
-
-){
-
-await marcarColetada(
-
-figurinha.id,
-
-figurinha.coletada==0
-
-);
-
-await atualizarResumo();
-
-}
-
 </script>

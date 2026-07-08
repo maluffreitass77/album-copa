@@ -1,168 +1,140 @@
 <template>
   <ion-page>
-
-    <AppHeader />
+    <ion-header>
+      <ion-toolbar>
+        <ion-title> Álbum da Copa </ion-title>
+      </ion-toolbar>
+    </ion-header>
 
     <ion-content class="ion-padding">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title> Meu Álbum </ion-card-title>
+        </ion-card-header>
 
-      <div class="stats">
-        <ion-badge color="success">
-          {{ coletadas }} / {{ total }} Coletadas
-        </ion-badge>
-      </div>
+        <ion-card-content>
+          <p>
+            Total de Figurinhas:
+
+            <strong>{{ total }}</strong>
+          </p>
+
+          <p>
+            Coletadas:
+
+            <strong>{{ coletadas }}</strong>
+          </p>
+
+          <p>
+            Conclusão:
+
+            <strong>{{ percentual }}%</strong>
+          </p>
+
+          <ion-progress-bar :value="percentual / 100"> </ion-progress-bar>
+        </ion-card-content>
+      </ion-card>
 
       <ion-searchbar
-        v-model="pesquisa"
+        v-model="texto"
         placeholder="Pesquisar jogador ou seleção"
+        @ionInput="buscar"
       />
 
-      <ion-segment v-model="filtro">
+      <ion-segment v-model="tipo" @ionChange="filtrar">
+        <ion-segment-button value="todas"> Todas </ion-segment-button>
 
-        <ion-segment-button value="all">
-          <ion-label>Todas</ion-label>
-        </ion-segment-button>
+        <ion-segment-button value="coletadas"> Coletadas </ion-segment-button>
 
-        <ion-segment-button value="collected">
-          <ion-label>Coletadas</ion-label>
-        </ion-segment-button>
-
-        <ion-segment-button value="pending">
-          <ion-label>Pendentes</ion-label>
-        </ion-segment-button>
-
+        <ion-segment-button value="pendentes"> Pendentes </ion-segment-button>
       </ion-segment>
 
-      <ion-grid>
+      <br />
 
-        <ion-row>
+     <br />
 
-          <ion-col
-            size="12"
-            size-md="6"
-            size-lg="4"
-            v-for="sticker in filtradas"
-            :key="sticker.id"
-          >
+<p><strong>Quantidade carregada:</strong> {{ figurinhas.length }}</p>
 
-            <StickerCard
-              :sticker="sticker"
-              @toggle="toggleCollected(sticker.id)"
-            />
-
-          </ion-col>
-
-        </ion-row>
-
-      </ion-grid>
-
+<StickerList
+  :figurinhas="figurinhas"
+  @alterar="alterarStatus"
+/>
     </ion-content>
-
   </ion-page>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
 
-import { ref, computed } from 'vue'
+import StickerList from "../components/StickerList.vue";
 
-import {
-  IonPage,
-  IonContent,
-  IonSearchbar,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonBadge,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel
-} from '@ionic/vue'
-
-import AppHeader from '@/components/AppHeader.vue'
-import StickerCard from '@/components/StickerCard.vue'
-
-import { useAlbum } from '@/composables/useAlbum'
+import { useAlbum } from "../composables/useAlbum";
 
 const {
-  album,
-  toggleCollected
-} = useAlbum()
+  figurinhas,
 
-const pesquisa = ref('')
+  carregar,
 
-const filtro = ref('all')
+  pesquisar,
 
-const filtradas = computed(() => {
+  filtro,
 
-  let resultado = album.value
+  marcarColetada,
 
-  if (pesquisa.value) {
+  totalColetadas,
 
-    resultado = resultado.filter(sticker =>
+  totalAlbum,
 
-      sticker.nome
-        .toLowerCase()
-        .includes(
-          pesquisa.value.toLowerCase()
-        )
+  percentualAlbum,
+} = useAlbum();
 
-      ||
+const texto = ref("");
 
-      sticker.selecao
-        .toLowerCase()
-        .includes(
-          pesquisa.value.toLowerCase()
-        )
+const tipo = ref("todas");
 
-    )
+const coletadas = ref(0);
 
+const total = ref(0);
+
+const percentual = ref(0);
+
+async function atualizarResumo() {
+  coletadas.value = await totalColetadas();
+
+  total.value = await totalAlbum();
+
+  percentual.value = await percentualAlbum();
+}
+
+onMounted(async () => {
+  await carregar();
+
+  await atualizarResumo();
+});
+
+async function buscar() {
+  if (texto.value == "") {
+    await carregar();
+  } else {
+    await pesquisar(texto.value);
   }
+}
 
-  if (filtro.value === 'collected') {
-
-    resultado = resultado.filter(
-      sticker => sticker.coletada
-    )
-
+async function filtrar() {
+  if (tipo.value == "todas") {
+    await carregar();
+  } else {
+    await filtro(tipo.value);
   }
+}
 
-  if (filtro.value === 'pending') {
+async function alterarStatus(figurinha: any) {
+  await marcarColetada(
+    figurinha.id,
 
-    resultado = resultado.filter(
-      sticker => !sticker.coletada
-    )
+    figurinha.coletada == 0,
+  );
 
-  }
-
-  return resultado
-
-})
-
-const total = computed(() =>
-  album.value.length
-)
-
-const coletadas = computed(() =>
-  album.value.filter(
-    sticker => sticker.coletada
-  ).length
-)
-
+  await atualizarResumo();
+}
 </script>
-
-<style scoped>
-
-.stats {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-ion-content {
-  --background: #f4f5f8;
-}
-
-ion-segment {
-  margin-bottom: 20px;
-}
-
-</style>

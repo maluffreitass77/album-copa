@@ -1,25 +1,18 @@
 <template>
-
-<StickerCard
-
-v-for="item in stickers"
-
-:key="item.id"
-
-:sticker="item"
-
-@toggle="$emit('toggle',item.id)"
-
-/>
-
+  <StickerCard
+    v-for="item in figurinhas"
+    :key="item.id"
+    :sticker="item"
+    @toggle="$emit('alterar', item)"
+  />
 </template>
 
 <script setup lang="ts">
+import StickerCard from "./StickerCard.vue"
 
-import StickerCard from './StickerCard.vue'
+defineProps<{
+  figurinhas: any[]
+}>()
 
-defineProps({
-stickers:Array
-})
-
+defineEmits(["alterar"])
 </script>

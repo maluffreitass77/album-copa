@@ -27,23 +27,37 @@ v-for="sticker in coletadas"
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
+import { computed, onMounted } from "vue"
 
 import {
 IonPage,
 IonContent
-} from '@ionic/vue'
+} from "@ionic/vue"
 
-import AppHeader from '@/components/AppHeader.vue'
+import AppHeader from "@/components/AppHeader.vue"
 
-import { useAlbum } from '@/composables/useAlbum'
+import { useAlbum } from "@/composables/useAlbum"
 
-const { album } = useAlbum()
+const {
 
-const coletadas = computed(() =>
+figurinhas,
 
-album.value.filter(
-s => s.coletada
+carregar
+
+} = useAlbum()
+
+onMounted(async()=>{
+
+await carregar()
+
+})
+
+const coletadas = computed(()=>
+
+figurinhas.value.filter(
+
+s=>s.coletada==1
+
 )
 
 )

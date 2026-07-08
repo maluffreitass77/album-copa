@@ -9,41 +9,61 @@
       <ion-card>
 
         <ion-card-header>
-
           <ion-card-title>
             Sobre o Aplicativo
           </ion-card-title>
-
         </ion-card-header>
 
         <ion-card-content>
 
           <p>
-            <strong>Aplicativo:</strong>
-            Álbum Digital da Copa
+            <strong>Aplicativo:</strong><br>
+            Álbum Digital da Copa do Mundo
           </p>
 
           <p>
-            <strong>Versão:</strong>
+            <strong>Versão:</strong><br>
             1.0.0
           </p>
 
-          <ion-button
-            expand="block"
-            href="https://www.termsfeed.com/live/terms"
-            target="_blank"
-          >
-            Termos de Uso
-          </ion-button>
+          <p>
+            <strong>Desenvolvedora:</strong><br>
+            Maria Luiza
+          </p>
 
-          <ion-button
-            expand="block"
-            color="secondary"
-            href="https://www.termsfeed.com/live/privacy-policy"
-            target="_blank"
-          >
-            Política de Privacidade
-          </ion-button>
+          <p>
+            <strong>Curso:</strong><br>
+            Análise e Desenvolvimento de Sistemas
+          </p>
+
+          <p>
+            <strong>Unidade Curricular:</strong><br>
+            Desenvolvimento Mobile
+          </p>
+
+          <p>
+            <strong>Objetivo:</strong><br>
+            Este aplicativo permite que o usuário acompanhe sua coleção de figurinhas da Copa do Mundo, pesquise jogadores, marque figurinhas coletadas, visualize seu progresso e acompanhe suas conquistas.
+          </p>
+
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Termos de Uso</h2>
+              <p>
+                Este aplicativo foi desenvolvido para fins acadêmicos.
+                Nenhum dado é compartilhado com terceiros.
+              </p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Política de Privacidade</h2>
+              <p>
+                Os dados cadastrados permanecem armazenados apenas no dispositivo do usuário utilizando banco SQLite.
+              </p>
+            </ion-label>
+          </ion-item>
 
         </ion-card-content>
 
@@ -64,7 +84,8 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
-  IonButton
+  IonItem,
+  IonLabel
 } from '@ionic/vue'
 
 import AppHeader from '@/components/AppHeader.vue'

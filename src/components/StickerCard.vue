@@ -1,12 +1,13 @@
 <template>
   <ion-card>
 
-    <ion-badge color="primary">
+    <ion-badge :color="corRaridade">
       {{ sticker.raridade }}
     </ion-badge>
 
     <img
-      :src="'/img/' + sticker.foto"
+      :src="'/jogadores/' + sticker.foto"
+      :alt="sticker.nome"
       class="foto"
       @error="erroImagem"
     />
@@ -51,23 +52,45 @@ import {
   IonCardContent,
   IonButton,
   IonBadge
-} from "@ionic/vue"
+} from '@ionic/vue'
 
-defineProps({
-  sticker: Object
+import { computed } from 'vue'
+
+const props = defineProps({
+  sticker: {
+    type: Object,
+    required: true
+  }
+})
+
+const corRaridade = computed(() => {
+  switch (props.sticker.raridade) {
+    case 'Comum':
+      return 'medium'
+    case 'Rara':
+      return 'warning'
+    case 'Brilhante':
+      return 'success'
+    default:
+      return 'primary'
+  }
 })
 
 function erroImagem(event: Event) {
-  console.log("Imagem não encontrada:", (event.target as HTMLImageElement).src)
+  console.log(
+    'Imagem não encontrada:',
+    (event.target as HTMLImageElement).src
+  )
 }
 </script>
 
 <style scoped>
 
-.foto{
-  width:100%;
-  height:220px;
-  object-fit:cover;
+.foto {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 </style>

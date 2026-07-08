@@ -40,32 +40,38 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/tabs',
     component: TabsPage,
-    children: [
+children: [
 
-      {
-        path: '',
-        redirect: '/tabs/album'
-      },
+  {
+    path: '',
+    redirect: '/tabs/album'
+  },
 
-      {
-        path: 'album',
-        component: () =>
-          import('@/views/AlbumPage.vue')
-      },
+  {
+    path: 'album',
+    component: () =>
+      import('@/views/AlbumPage.vue')
+  },
 
-      {
-        path: 'collection',
-        component: () =>
-          import('@/views/CollectionPage.vue')
-      },
+  {
+    path: 'collection',
+    component: () =>
+      import('@/views/CollectionPage.vue')
+  },
 
-      {
-        path: 'profile',
-        component: () =>
-          import('@/views/ProfilePage.vue')
-      }
+  {
+    path: 'profile',
+    component: () =>
+      import('@/views/ProfilePage.vue')
+  },
 
-    ]
+  {
+    path: 'about',
+    component: () =>
+      import('@/views/AboutPage.vue')
+  }
+
+]
   }
 
 ]

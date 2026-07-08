@@ -28,21 +28,15 @@ export function useAchievements() {
         CASE
           WHEN ua.id IS NULL THEN 0
           ELSE 1
-        END as desbloqueada
-
+        END AS desbloqueada
       FROM achievements a
-
       LEFT JOIN user_achievements ua
-
-      ON ua.achievement_id = a.id
-
-      AND ua.user_id = ${userId}
-
+        ON ua.achievement_id = a.id
+        AND ua.user_id = ?
       ORDER BY a.id
-    `);
+    `, [userId]);
 
     achievements.value = resultado.values || [];
-
   }
 
   async function desbloquear(
@@ -56,9 +50,8 @@ export function useAchievements() {
       `
       SELECT id
       FROM user_achievements
-
-      WHERE user_id=?
-      AND achievement_id=?
+      WHERE user_id = ?
+      AND achievement_id = ?
       `,
       [userId, achievementId]
     );
@@ -72,49 +65,50 @@ export function useAchievements() {
     await db.run(
       `
       INSERT INTO user_achievements
-
-      (user_id,achievement_id,data_desbloqueio)
-
-      VALUES(?,?,?)
+      (user_id, achievement_id, data_desbloqueio)
+      VALUES (?, ?, ?)
       `,
       [userId, achievementId, data]
     );
-
   }
 
   async function verificarConquistas(userId: number) {
 
     const db = getDB();
 
-    const total = await db.query(`
-      SELECT COUNT(*) as total
+    const totalColetadas = await db.query(`
+      SELECT COUNT(*) AS total
       FROM figurinhas
-      WHERE coletada=1
+      WHERE coletada = 1
     `);
 
-    const coletadas = total.values?.[0]?.total || 0;
+    const coletadas = totalColetadas.values?.[0]?.total || 0;
 
     const raras = await db.query(`
-      SELECT COUNT(*) as total
+      SELECT COUNT(*) AS total
       FROM figurinhas
-      WHERE coletada=1
-      AND raridade='rara'
+      WHERE coletada = 1
+      AND raridade = 'Rara'
     `);
 
     const brilhantes = await db.query(`
-      SELECT COUNT(*) as total
+      SELECT COUNT(*) AS total
       FROM figurinhas
-      WHERE coletada=1
-      AND raridade='brilhante'
+      WHERE coletada = 1
+      AND raridade = 'Brilhante'
     `);
 
     const totalAlbum = await db.query(`
-      SELECT COUNT(*) as total
+      SELECT COUNT(*) AS total
       FROM figurinhas
     `);
 
+    const totalFigurinhas = totalAlbum.values?.[0]?.total || 0;
+
     const percentual =
-      (coletadas / totalAlbum.values?.[0]?.total) * 100;
+      totalFigurinhas > 0
+        ? (coletadas / totalFigurinhas) * 100
+        : 0;
 
     if (coletadas >= 1)
       await desbloquear(userId, 1);
@@ -143,21 +137,15 @@ export function useAchievements() {
     if (percentual >= 80)
       await desbloquear(userId, 9);
 
-    if (percentual == 100)
+    if (percentual === 100)
       await desbloquear(userId, 10);
 
     await carregar(userId);
-
   }
 
   return {
-
     achievements,
-
     carregar,
-
     verificarConquistas
-
   };
-
 }

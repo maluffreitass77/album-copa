@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { getDB } from "../services/database";
-import { useAchievements } from "./useAchievements";
+import { useAchievements } from "@/composables/useAchievements";
 import type { Sticker } from "../types/Sticker";
 
 const figurinhas = ref<Sticker[]>([]);

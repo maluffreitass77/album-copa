@@ -1,103 +1,92 @@
 <template>
 
-<ion-page>
+  <ion-page>
 
-<ion-header>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Conquistas</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-<ion-toolbar>
+    <ion-content class="ion-padding">
 
-<ion-title>
+      <h2>Progresso Geral</h2>
 
-Conquistas
+      <ion-progress-bar
+        :value="progresso"
+        color="success"
+      />
 
-</ion-title>
+      <p class="texto-progresso">
+        {{ desbloqueadas }} de {{ achievements.length }} conquistas desbloqueadas
+      </p>
 
-</ion-toolbar>
+      <AchievementCard
+        v-for="item in achievements"
+        :key="item.id"
+        :achievement="item"
+      />
 
-</ion-header>
+    </ion-content>
 
-<ion-content class="ion-padding">
-
-<ion-progress-bar
-
-:value="progresso"
-
-/>
-
-<br>
-
-<AchievementCard
-
-v-for="item in achievements"
-
-:key="item.id"
-
-:achievement="item"
-
-/>
-
-</ion-content>
-
-</ion-page>
+  </ion-page>
 
 </template>
 
 <script setup lang="ts">
 
 import {
-
-ref,
-
-computed,
-
-onMounted
-
+  computed,
+  onMounted
 } from "vue";
+
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonProgressBar
+} from "@ionic/vue";
 
 import AchievementCard from "../components/AchievementCard.vue";
 
 import {
-
-useAchievements
-
+  useAchievements
 } from "../composables/useAchievements";
 
-const{
+const {
+  achievements,
+  carregar
+} = useAchievements();
 
-achievements,
+const userId = 1;
 
-carregar
-
-}=useAchievements();
-
-const userId=1;
-
-onMounted(async()=>{
-
-await carregar(userId);
-
+onMounted(async () => {
+  await carregar(userId);
 });
 
-const progresso=computed(()=>{
+const desbloqueadas = computed(() =>
+  achievements.value.filter((a:any) => a.desbloqueada).length
+);
 
-if(achievements.value.length==0)
+const progresso = computed(() => {
 
-return 0;
+  if (achievements.value.length === 0)
+    return 0;
 
-const total=
-
-achievements.value.length;
-
-const desbloqueadas=
-
-achievements.value.filter(
-
-(a:any)=>a.desbloqueada
-
-).length;
-
-return desbloqueadas/total;
+  return desbloqueadas.value / achievements.value.length;
 
 });
 
 </script>
+
+<style scoped>
+
+.texto-progresso{
+  text-align:center;
+  margin:12px 0 20px;
+  font-weight:bold;
+}
+
+</style>

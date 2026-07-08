@@ -1,4 +1,4 @@
-export interface Sticker {
+export interface Sticker{
 
     id:number;
 
@@ -8,7 +8,7 @@ export interface Sticker {
 
     foto:string;
 
-    raridade:string;
+    raridade:"comum" | "rara" | "brilhante";
 
     coletada:number;
 

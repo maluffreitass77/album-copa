@@ -1,172 +1,184 @@
 import { ref } from "vue";
-
 import { getDB } from "../services/database";
-
+import { useAchievements } from "./useAchievements";
 import type { Sticker } from "../types/Sticker";
-
-export function useAlbum(){
-
 
 const figurinhas = ref<Sticker[]>([]);
 
+export function useAlbum() {
 
+  const { verificarConquistas } = useAchievements();
 
-async function carregar(){
+  async function carregar() {
 
+    const db = getDB();
 
-const db=getDB();
+    const resultado = await db.query(`
+      SELECT *
+      FROM figurinhas
+      ORDER BY selecao,nome
+    `);
 
+    figurinhas.value = (resultado.values || []) as Sticker[];
 
-const resultado =
-await db.query(
+  }
 
-`
-SELECT *
-FROM figurinhas
+  async function pesquisar(texto: string) {
 
-`
+    const db = getDB();
 
-);
+    const resultado = await db.query(
+      `
+      SELECT *
 
+      FROM figurinhas
 
-figurinhas.value =
-resultado.values;
+      WHERE
 
+      nome LIKE ?
 
-}
+      OR
 
+      selecao LIKE ?
 
+      ORDER BY selecao,nome
+      `,
+      [
+        `%${texto}%`,
+        `%${texto}%`
+      ]
+    );
 
-async function marcarColetada(id,status){
+    figurinhas.value = (resultado.values || []) as Sticker[];
 
+  }
 
-const db=getDB();
+  async function filtro(tipo: string) {
 
+    const db = getDB();
 
-await db.run(
+    let sql = `
+      SELECT *
+      FROM figurinhas
+    `;
 
-`
-UPDATE figurinhas
+    if (tipo == "coletadas") {
 
-SET coletada=?
+      sql += `
+        WHERE coletada=1
+      `;
 
-WHERE id=?
+    }
 
-`,
+    if (tipo == "pendentes") {
 
-[
-status ? 1:0,
-id
-]
+      sql += `
+        WHERE coletada=0
+      `;
 
-);
+    }
 
+    sql += `
+      ORDER BY selecao,nome
+    `;
 
+    const resultado = await db.query(sql);
 
-await carregar();
+    figurinhas.value = (resultado.values || []) as Sticker[];
 
+  }
 
-}
+  async function marcarColetada(
+    id: number,
+    status: boolean
+  ) {
 
+    const db = getDB();
 
+    await db.run(
+      `
+      UPDATE figurinhas
 
+      SET coletada=?
 
-async function pesquisar(texto){
+      WHERE id=?
+      `,
+      [
+        status ? 1 : 0,
+        id
+      ]
+    );
 
+    // usuário temporário
+    const userId = 1;
 
-const db=getDB();
+    await verificarConquistas(userId);
 
+    await carregar();
 
+  }
 
-const resultado =
-await db.query(
+  async function totalColetadas() {
 
-`
+    const db = getDB();
 
-SELECT *
+    const resultado = await db.query(`
+      SELECT COUNT(*) as total
+      FROM figurinhas
+      WHERE coletada=1
+    `);
 
-FROM figurinhas
+    return resultado.values?.[0]?.total || 0;
 
-WHERE nome LIKE ?
+  }
 
-OR selecao LIKE ?
+  async function totalAlbum() {
 
-`,
+    const db = getDB();
 
-[
-`%${texto}%`,
-`%${texto}%`
-]
+    const resultado = await db.query(`
+      SELECT COUNT(*) as total
+      FROM figurinhas
+    `);
 
-);
+    return resultado.values?.[0]?.total || 0;
 
+  }
 
+  async function percentualAlbum() {
 
-figurinhas.value =
-resultado.values;
+    const coletadas = await totalColetadas();
 
+    const total = await totalAlbum();
 
+    if (total == 0) {
 
-}
+      return 0;
 
+    }
 
+    return Math.round((coletadas / total) * 100);
 
-async function filtro(tipo){
+  }
 
+  return {
 
-const db=getDB();
+    figurinhas,
 
+    carregar,
 
+    pesquisar,
 
-let sql =
-"SELECT * FROM figurinhas";
+    filtro,
 
+    marcarColetada,
 
+    totalColetadas,
 
-if(tipo==="coletadas"){
+    totalAlbum,
 
-sql +=
-" WHERE coletada=1";
+    percentualAlbum
 
-}
-
-
-if(tipo==="pendentes"){
-
-sql +=
-" WHERE coletada=0";
-
-}
-
-
-
-const resultado =
-await db.query(sql);
-
-
-figurinhas.value = resultado.values as Sticker[];
-
-
-
-}
-
-
-
-return{
-
-figurinhas,
-
-carregar,
-
-marcarColetada,
-
-pesquisar,
-
-filtro
-
-
-}
-
-
+  };
 
 }

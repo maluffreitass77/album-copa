@@ -34,22 +34,14 @@ const router = useRouter()
 
 const { register } = useAuth()
 
-function cadastrar(
-nome:string,
-email:string,
-senha:string
-){
-
-register(
-nome,
-email,
-senha
-)
-
-alert('Cadastro realizado!')
-
-router.push('/login')
-
+async function cadastrar(
+  nome: string,
+  email: string,
+  senha: string
+) {
+  await register(nome, email, senha)
+  alert('Cadastro realizado!')
+  router.push('/login')
 }
 
 </script>

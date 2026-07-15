@@ -6,11 +6,6 @@ import { IonicVue } from '@ionic/vue'
 
 import { initDB } from './services/database'
 
-router.isReady().then(async () => {
-  await initDB()
-  app.mount('#app')
-})
-
 import '@ionic/vue/css/core.css'
 import '@ionic/vue/css/normalize.css'
 import '@ionic/vue/css/structure.css'
@@ -30,9 +25,6 @@ const app = createApp(App)
   .use(router)
 
 router.isReady().then(async () => {
-
   await initDB()
-
   app.mount('#app')
-
 })

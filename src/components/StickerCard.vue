@@ -65,11 +65,11 @@ const props = defineProps({
 
 const corRaridade = computed(() => {
   switch (props.sticker.raridade) {
-    case 'Comum':
+    case 'comum':
       return 'medium'
-    case 'Rara':
+    case 'rara':
       return 'warning'
-    case 'Brilhante':
+    case 'brilhante':
       return 'success'
     default:
       return 'primary'

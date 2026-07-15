@@ -41,7 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tabs',
     component: TabsPage,
 children: [
-
+{
+  path: 'statistics',
+  component: () =>
+    import('@/views/StatisticsPage.vue')
+},
   {
     path: '',
     redirect: '/tabs/album'

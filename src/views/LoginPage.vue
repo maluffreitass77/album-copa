@@ -61,28 +61,17 @@ const {
   login
 } = useAuth()
 
-const fazerLogin = (
+const fazerLogin = async (
   email: string,
   senha: string
 ) => {
-
-  const sucesso =
-    login(email, senha)
+  const sucesso = await login(email, senha)
 
   if (sucesso) {
-
-    router.push(
-      '/tabs/album'
-    )
-
+    router.push('/tabs/album')
   } else {
-
-    alert(
-      'Usuário não encontrado'
-    )
-
+    alert('Usuário não encontrado')
   }
-
 }
 
 </script>

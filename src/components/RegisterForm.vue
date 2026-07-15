@@ -28,16 +28,16 @@ const email = ref("");
 const senha = ref("");
 
 function submit() {
-  emit("register", nome.value, email.value, senha.value);
-    if(!nome.value || !email.value || !senha.value){
-        alert("Preencha todos os campos");
-    return;
-    }
-    if(senha.value.length < 6){
+  if (!nome.value || !email.value || !senha.value) {
+    alert("Preencha todos os campos")
+    return
+  }
 
-    alert("Senha muito fraca");
-        return;
+  if (senha.value.length < 6) {
+    alert("Senha muito fraca")
+    return
+  }
 
-}
+  emit("register", nome.value, email.value, senha.value)
 }
 </script>

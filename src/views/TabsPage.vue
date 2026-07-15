@@ -21,7 +21,7 @@
           <ion-label>Perfil</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="about" href="/about">
+        <ion-tab-button tab="about" href="/tabs/about">
           <ion-icon :icon="informationCircleOutline" />
           <ion-label>Sobre</ion-label>
         </ion-tab-button>

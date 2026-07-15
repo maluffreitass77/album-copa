@@ -88,14 +88,14 @@ export function useAchievements() {
       SELECT COUNT(*) AS total
       FROM figurinhas
       WHERE coletada = 1
-      AND raridade = 'Rara'
+      AND raridade = 'rara'
     `);
 
     const brilhantes = await db.query(`
       SELECT COUNT(*) AS total
       FROM figurinhas
       WHERE coletada = 1
-      AND raridade = 'Brilhante'
+      AND raridade = 'brilhante'
     `);
 
     const totalAlbum = await db.query(`

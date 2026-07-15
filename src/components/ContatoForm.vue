@@ -75,8 +75,7 @@ form.email = ''
 form.telefone = ''
 toast.message = 'Contato salvo com sucesso!'
 toast.show = true
-toast.message = 'Contato salvo com sucesso!'
-window.dispatchEvent(new CustomEvent('contato-adicionado'))
+window.dispatchEvent(new CustomEvent('contato-salvo'))
 
 }
 

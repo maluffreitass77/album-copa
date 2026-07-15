@@ -86,15 +86,15 @@ import AppHeader from '@/components/AppHeader.vue'
 
 import { useAlbum } from '@/composables/useAlbum'
 
-const { album } = useAlbum()
+const { figurinhas } = useAlbum()
 
 const total = computed(() =>
-  album.value.length
+  figurinhas.value.length
 )
 
 const coletadas = computed(() =>
-  album.value.filter(
-    sticker => sticker.coletada
+  figurinhas.value.filter(
+    (sticker: any) => sticker.coletada
   ).length
 )
 

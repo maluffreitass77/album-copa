@@ -6,22 +6,22 @@
 
       <ion-tab-bar slot="bottom">
 
-        <ion-tab-button tab="album" href="/tabs/album">
+        <ion-tab-button tab="album" href="/tabs/album" router-direction="root">
           <ion-icon :icon="bookOutline" />
           <ion-label>Álbum</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="collection" href="/tabs/collection">
+        <ion-tab-button tab="collection" href="/tabs/collection" router-direction="root">
           <ion-icon :icon="imagesOutline" />
           <ion-label>Coleção</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="profile" href="/tabs/profile">
+        <ion-tab-button tab="profile" href="/tabs/profile" router-direction="root">
           <ion-icon :icon="personCircleOutline" />
           <ion-label>Perfil</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="about" href="/tabs/about">
+        <ion-tab-button tab="about" href="/tabs/about" router-direction="root">
           <ion-icon :icon="informationCircleOutline" />
           <ion-label>Sobre</ion-label>
         </ion-tab-button>

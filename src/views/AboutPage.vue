@@ -2,7 +2,14 @@
 
   <ion-page>
 
-    <AppHeader />
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button default-href="/tabs/profile" text="Voltar"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Sobre o Aplicativo</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
     <ion-content class="ion-padding">
 
@@ -85,9 +92,12 @@ import {
   IonCardTitle,
   IonCardContent,
   IonItem,
-  IonLabel
+  IonLabel,
+  IonButtons,
+  IonBackButton,
+  IonHeader,
+  IonToolbar,
+  IonTitle
 } from '@ionic/vue'
-
-import AppHeader from '@/components/AppHeader.vue'
 
 </script>

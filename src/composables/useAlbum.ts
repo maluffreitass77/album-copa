@@ -98,7 +98,9 @@ export function useAlbum() {
     );
 
     const userId = getUserId();
-    await verificarConquistas(userId);
+    if (userId !== null) {
+      await verificarConquistas(userId);
+    }
 
     await carregar();
 

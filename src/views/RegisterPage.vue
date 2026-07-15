@@ -5,13 +5,14 @@
 <AppHeader/>
 
 <ion-content class="ion-padding">
-
 <RegisterForm
 @register="cadastrar"
 />
 
+<ion-button expand="block" fill="clear" class="ion-margin-top" @click="router.replace('/login')">
+Voltar para login
+</ion-button>
 </ion-content>
-
 </ion-page>
 
 </template>
@@ -19,8 +20,9 @@
 <script setup lang="ts">
 
 import {
-IonPage,
-IonContent
+ IonPage,
+ IonContent,
+ IonButton
 } from '@ionic/vue'
 
 import { useRouter } from 'vue-router'
@@ -42,7 +44,7 @@ async function cadastrar(
   try {
     await register(nome, email, senha)
     alert('Cadastro realizado!')
-    router.push('/login')
+    router.replace('/login')
   } catch (error) {
     alert('Não foi possível cadastrar. Verifique o email e tente novamente.')
   }

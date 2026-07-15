@@ -24,7 +24,12 @@ const app = createApp(App)
   .use(IonicVue)
   .use(router)
 
-router.isReady().then(async () => {
-  await initDB()
-  app.mount('#app')
+router.isReady().then(() => {
+  initDB()
+    .catch((error) => {
+      console.error('Falha ao inicializar o SQLite. A navegação continuará mesmo sem o banco.', error)
+    })
+    .finally(() => {
+      app.mount('#app')
+    })
 })

@@ -20,12 +20,12 @@
 
           <p>
             <strong>Nome:</strong>
-            Maria Luiza
+            {{ usuario?.nome ?? 'Usuário' }}
           </p>
 
           <p>
             <strong>Email:</strong>
-            admin@copa.com
+            {{ usuario?.email ?? 'Não informado' }}
           </p>
 
           <p>
@@ -49,7 +49,7 @@
 
       <ion-button
         expand="block"
-        router-link="/about"
+        @click="router.replace('/tabs/about')"
       >
         ℹ️ Sobre o Aplicativo
       </ion-button>
@@ -71,6 +71,7 @@
 <script setup lang="ts">
 
 import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 import {
   IonPage,
@@ -85,8 +86,14 @@ import {
 import AppHeader from '@/components/AppHeader.vue'
 
 import { useAlbum } from '@/composables/useAlbum'
+import { useAuth } from '@/composables/useAuth'
+
+const router = useRouter()
 
 const { figurinhas, carregar } = useAlbum()
+const { logout: logoutAuth, getCurrentUser } = useAuth()
+
+const usuario = computed(() => getCurrentUser())
 
 const total = computed(() =>
   figurinhas.value.length
@@ -115,9 +122,8 @@ const porcentagem = computed(() => {
 })
 
 function logout() {
-
-  alert('Logout realizado!')
-
+  logoutAuth()
+  router.replace('/login')
 }
 
 </script>

@@ -8,15 +8,21 @@
 
     <ion-content class="ion-padding">
       <ResetPasswordForm @reset="handleResetPassword" />
+
+      <ion-button expand="block" fill="clear" class="ion-margin-top" @click="router.replace('/login')">
+        Voltar para login
+      </ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle } from '@ionic/vue'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonButton } from '@ionic/vue'
+import { useRouter } from 'vue-router'
 import ResetPasswordForm from '@/components/ResetPasswordForm.vue'
 import { useAuth } from '@/composables/useAuth'
 
+const router = useRouter()
 const { resetPassword } = useAuth()
 
 async function handleResetPassword(email: string, senha: string) {
@@ -25,6 +31,7 @@ async function handleResetPassword(email: string, senha: string) {
 
     if (sucesso) {
       alert('Senha alterada com sucesso. Use a nova senha para entrar.')
+      router.replace('/login')
     } else {
       alert('Email não encontrado. Verifique e tente novamente.')
     }

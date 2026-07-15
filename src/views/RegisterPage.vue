@@ -39,9 +39,13 @@ async function cadastrar(
   email: string,
   senha: string
 ) {
-  await register(nome, email, senha)
-  alert('Cadastro realizado!')
-  router.push('/login')
+  try {
+    await register(nome, email, senha)
+    alert('Cadastro realizado!')
+    router.push('/login')
+  } catch (error) {
+    alert('Não foi possível cadastrar. Verifique o email e tente novamente.')
+  }
 }
 
 </script>

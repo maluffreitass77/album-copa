@@ -34,7 +34,7 @@
 
       <ion-button
         expand="block"
-        @click="$emit('toggle')"
+        @click="emit('toggle')"
       >
         Trocar Status
       </ion-button>
@@ -62,6 +62,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['toggle'])
 
 const corRaridade = computed(() => {
   switch (props.sticker.raridade) {

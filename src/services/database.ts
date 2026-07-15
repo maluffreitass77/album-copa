@@ -49,12 +49,17 @@ export async function initDB() {
   `);
 
   await db.execute(`
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_figurinhas_unique
-    ON figurinhas(nome,selecao,foto)
+    CREATE TABLE IF NOT EXISTS contatos(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      email TEXT NOT NULL,
+      telefone TEXT
+    )
   `);
 
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS contatos(
+  // ==========================
+  // TABELA CONQUISTAS
+  // ==========================
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
       email TEXT NOT NULL,

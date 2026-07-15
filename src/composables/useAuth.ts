@@ -51,17 +51,42 @@ return false;
 
 
 
-function logout(){
+async function resetPassword(email: string, senha: string) {
+ const db = getDB();
 
-localStorage.removeItem("user");
+ const resultado = await db.query(
+   `
+   SELECT id
+   FROM usuarios
+   WHERE email = ?
+   `,
+   [email]
+ );
 
+ if (!resultado.values || resultado.values.length === 0) {
+   return false;
+ }
+
+ await db.run(
+   `
+   UPDATE usuarios
+   SET senha = ?
+   WHERE email = ?
+   `,
+   [senha, email]
+ );
+
+ return true;
 }
 
-
+function logout(){
+ localStorage.removeItem("user");
+}
 
 return {
  register,
  login,
+ resetPassword,
  logout
 };
 

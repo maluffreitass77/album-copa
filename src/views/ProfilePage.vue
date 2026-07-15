@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 import {
   IonPage,
@@ -86,7 +86,7 @@ import AppHeader from '@/components/AppHeader.vue'
 
 import { useAlbum } from '@/composables/useAlbum'
 
-const { figurinhas } = useAlbum()
+const { figurinhas, carregar } = useAlbum()
 
 const total = computed(() =>
   figurinhas.value.length
@@ -97,6 +97,10 @@ const coletadas = computed(() =>
     (sticker: any) => sticker.coletada
   ).length
 )
+
+onMounted(async () => {
+  await carregar()
+})
 
 const porcentagem = computed(() => {
 

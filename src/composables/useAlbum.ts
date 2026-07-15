@@ -1,13 +1,19 @@
 import { ref } from "vue";
 import { getDB } from "../services/database";
 import { useAchievements } from "@/composables/useAchievements";
+import { useAuth } from "@/composables/useAuth";
 import type { Sticker } from "../types/Sticker";
 
 const figurinhas = ref<Sticker[]>([]);
 
 export function useAlbum() {
-
   const { verificarConquistas } = useAchievements();
+  const { getCurrentUserId } = useAuth();
+
+  function getUserId() {
+    return getCurrentUserId()
+  }
+
   async function carregar() {
 
     const db = getDB();
@@ -91,9 +97,7 @@ export function useAlbum() {
       ]
     );
 
-    // usuário temporário
-    const userId = 1;
-
+    const userId = getUserId();
     await verificarConquistas(userId);
 
     await carregar();

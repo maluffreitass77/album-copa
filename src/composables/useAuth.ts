@@ -83,11 +83,31 @@ function logout(){
  localStorage.removeItem("user");
 }
 
+function getCurrentUser() {
+ const item = localStorage.getItem("user")
+ if (!item) {
+   return null
+ }
+
+ try {
+   return JSON.parse(item)
+ } catch {
+   return null
+ }
+}
+
+function getCurrentUserId(): number | null {
+ const user = getCurrentUser()
+ return user?.id ?? null
+}
+
 return {
  register,
  login,
  resetPassword,
- logout
+ logout,
+ getCurrentUser,
+ getCurrentUserId
 };
 
 

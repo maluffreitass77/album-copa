@@ -60,26 +60,16 @@ export async function initDB() {
   // ==========================
   // TABELA CONQUISTAS
   // ==========================
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      email TEXT NOT NULL,
-      telefone TEXT
-    )
-  `);
-
-  // ==========================
-  // TABELA CONQUISTAS
-  // ==========================
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS achievements(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome TEXT NOT NULL,
-  descricao TEXT NOT NULL,
-  icone TEXT NOT NULL,
-  desbloqueada INTEGER DEFAULT 0,
-  data_desbloqueio TEXT
-)
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      descricao TEXT NOT NULL,
+      icone TEXT NOT NULL,
+      desbloqueada INTEGER DEFAULT 0,
+      data_desbloqueio TEXT
+    )
   `);
 
   // ==========================

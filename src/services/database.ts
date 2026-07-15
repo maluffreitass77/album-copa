@@ -48,19 +48,28 @@ export async function initDB() {
     )
   `);
 
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS contatos(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      email TEXT NOT NULL,
+      telefone TEXT
+    )
+  `);
+
   // ==========================
   // TABELA CONQUISTAS
   // ==========================
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS achievements(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome TEXT NOT NULL,
-  descricao TEXT NOT NULL,
-  icone TEXT NOT NULL,
-  desbloqueada INTEGER DEFAULT 0,
-  data_desbloqueio TEXT
-)
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      descricao TEXT NOT NULL,
+      icone TEXT NOT NULL,
+      desbloqueada INTEGER DEFAULT 0,
+      data_desbloqueio TEXT
+    )
   `);
 
   // ==========================
@@ -78,25 +87,19 @@ export async function initDB() {
     )
   `);
 
-  await inserirFigurinhas();
+  const figureCount = await db.query(`SELECT COUNT(*) as total FROM figurinhas`);
+
+  if (figureCount.values?.[0]?.total === 0) {
+    await inserirFigurinhas();
+  }
 
   await inserirAchievements();
-
 }
 
 async function inserirFigurinhas() {
 
   await db.execute(`
-    DELETE FROM figurinhas
-  `);
-
-  await db.execute(`
-    DELETE FROM sqlite_sequence
-    WHERE name='figurinhas'
-  `);
-
-  await db.execute(`
-    INSERT INTO figurinhas
+    INSERT OR IGNORE INTO figurinhas
     (nome,selecao,foto,raridade)
     VALUES
 
@@ -243,16 +246,69 @@ export async function getTotalAlbum() {
 
   return result.values?.[0].total || 0
 }
+
+export async function addContato(
+  nome: string,
+  email: string,
+  telefone: string
+) {
+  await db.run(
+    `
+    INSERT INTO contatos
+    (nome, email, telefone)
+    VALUES (?, ?, ?)
+    `,
+    [nome, email, telefone]
+  )
+}
+
+export async function listContatos() {
+  const result = await db.query(`
+    SELECT *
+    FROM contatos
+    ORDER BY nome
+  `)
+
+  return result.values || []
+}
+
+export async function updateContato(
+  id: number,
+  nome: string,
+  email: string,
+  telefone: string
+) {
+  await db.run(
+    `
+    UPDATE contatos
+    SET nome = ?, email = ?, telefone = ?
+    WHERE id = ?
+    `,
+    [nome, email, telefone, id]
+  )
+}
+
+export async function deleteContatoById(id: number) {
+  await db.run(
+    `
+    DELETE FROM contatos
+    WHERE id = ?
+    `,
+    [id]
+  )
+}
+
 export function getDB() {
   return db;
 }
 
 export async function getPercentualAlbum() {
-
   const coletadas = await getTotalFigurinhas()
-
   const total = await getTotalAlbum()
 
-  return Math.round((coletadas / total) * 100)
+  if (total === 0) {
+    return 0
+  }
 
+  return Math.round((coletadas / total) * 100)
 }

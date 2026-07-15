@@ -60,13 +60,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Achievement } from '@/composables/useAchievements'
 
-defineProps({
-
-  achievement:Object
-
-})
-
+defineProps<{
+  achievement: Achievement
+}>()
 </script>
 
 <style scoped>

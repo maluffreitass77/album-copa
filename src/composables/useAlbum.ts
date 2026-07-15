@@ -1,13 +1,19 @@
 import { ref } from "vue";
 import { getDB } from "../services/database";
 import { useAchievements } from "@/composables/useAchievements";
+import { useAuth } from "@/composables/useAuth";
 import type { Sticker } from "../types/Sticker";
 
 const figurinhas = ref<Sticker[]>([]);
 
 export function useAlbum() {
-
   const { verificarConquistas } = useAchievements();
+  const { getCurrentUserId } = useAuth();
+
+  function getUserId() {
+    return getCurrentUserId()
+  }
+
   async function carregar() {
 
     const db = getDB();
@@ -26,51 +32,49 @@ export function useAlbum() {
 
 
   async function pesquisar(texto: string) {
-
     const db = getDB();
 
-    const resultado = await db.query(sql);
+    const sql = `
+      SELECT *
+      FROM figurinhas
+      WHERE nome LIKE ? OR selecao LIKE ?
+      ORDER BY selecao,nome
+    `;
 
-    console.log("TIPO:", tipo);
-    console.log("RESULTADO:", resultado.values);
+    const resultado = await db.query(sql, [
+      `%${texto}%`,
+      `%${texto}%`
+    ]);
 
     figurinhas.value = (resultado.values || []) as Sticker[];
+  }
 
+  async function filtro(tipo: string) {
+    const db = getDB();
 
-    async function filtro(tipo: string) {
-
-      const db = getDB();
-
-      let sql = `
+    let sql = `
       SELECT *
       FROM figurinhas
     `;
 
-      if (tipo == "coletadas") {
-
-        sql += `
+    if (tipo === "coletadas") {
+      sql += `
         WHERE coletada=1
       `;
+    }
 
-      }
-
-      if (tipo == "pendentes") {
-
-        sql += `
+    if (tipo === "pendentes") {
+      sql += `
         WHERE coletada=0
       `;
+    }
 
-      }
-
-      sql += `
+    sql += `
       ORDER BY selecao,nome
     `;
 
-      const resultado = await db.query(sql);
-
-      figurinhas.value = (resultado.values || []) as Sticker[];
-
-    }
+    const resultado = await db.query(sql);
+    figurinhas.value = (resultado.values || []) as Sticker[];
   }
   async function marcarColetada(
     id: number,
@@ -93,10 +97,10 @@ export function useAlbum() {
       ]
     );
 
-    // usuário temporário
-    const userId = 1;
-
-    await verificarConquistas(userId);
+    const userId = getUserId();
+    if (userId !== null) {
+      await verificarConquistas(userId);
+    }
 
     await carregar();
 
@@ -144,25 +148,70 @@ export function useAlbum() {
     return Math.round((coletadas / total) * 100);
 
   }
+  async function totalRarasColetadas() {
+
+  const db = getDB();
+
+  const resultado = await db.query(`
+    SELECT COUNT(*) AS total
+    FROM figurinhas
+    WHERE coletada = 1
+    AND raridade = 'rara'
+  `);
+
+  return resultado.values?.[0]?.total || 0;
+
+}
+
+async function totalBrilhantesColetadas() {
+
+  const db = getDB();
+
+  const resultado = await db.query(`
+    SELECT COUNT(*) AS total
+    FROM figurinhas
+    WHERE coletada = 1
+    AND raridade = 'brilhante'
+  `);
+
+  return resultado.values?.[0]?.total || 0;
+
+}
+
+async function totalPendentes() {
+
+  const total = await totalAlbum();
+
+  const coletadas = await totalColetadas();
+
+  return total - coletadas;
+
+}
 
   return {
 
-    figurinhas,
+  figurinhas,
 
-    carregar,
+  carregar,
 
-    pesquisar,
+  pesquisar,
 
-    // filtro,
+  filtro,
 
-    marcarColetada,
+  marcarColetada,
 
-    totalColetadas,
+  totalColetadas,
 
-    totalAlbum,
+  totalAlbum,
 
-    percentualAlbum
+  percentualAlbum,
 
-  };
+  totalRarasColetadas,
+
+  totalBrilhantesColetadas,
+
+  totalPendentes
+
+};
 
 }

@@ -19,7 +19,7 @@
       <ion-button
         expand="block"
         fill="clear"
-        router-link="/register"
+        @click="router.push('/register')"
       >
         Criar conta
       </ion-button>
@@ -27,7 +27,7 @@
       <ion-button
         expand="block"
         fill="clear"
-        router-link="/reset-password"
+        @click="router.push('/reset-password')"
       >
         Esqueci minha senha
       </ion-button>
@@ -61,28 +61,17 @@ const {
   login
 } = useAuth()
 
-const fazerLogin = (
+const fazerLogin = async (
   email: string,
   senha: string
 ) => {
-
-  const sucesso =
-    login(email, senha)
+  const sucesso = await login(email, senha)
 
   if (sucesso) {
-
-    router.push(
-      '/tabs/album'
-    )
-
+  router.replace('/tabs/album')
   } else {
-
-    alert(
-      'Usuário não encontrado'
-    )
-
+    alert('Usuário não encontrado')
   }
-
 }
 
 </script>

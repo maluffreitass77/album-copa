@@ -54,16 +54,19 @@ import AchievementCard from "../components/AchievementCard.vue";
 import {
   useAchievements
 } from "../composables/useAchievements";
+import { useAuth } from "../composables/useAuth";
 
 const {
   achievements,
   carregar
 } = useAchievements();
-
-const userId = 1;
+const { getCurrentUserId } = useAuth();
 
 onMounted(async () => {
-  await carregar(userId);
+  const userId = getCurrentUserId();
+  if (userId !== null) {
+    await carregar(userId);
+  }
 });
 
 const desbloqueadas = computed(() =>
